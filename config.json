@@ -1,0 +1,30 @@
+{
+  "DestinationHost": "localhost",
+  "DestinationPort": 21000,
+  "RedirectDomains": [
+    ".hoyoverse.com",
+    ".mihoyo.com",
+    ".yuanshen.com",
+    ".bhsr.com",
+    ".starrails.com",
+    ".juequling.com",
+    ".zenlesszonezero.com",
+    ".bh3.com",
+    ".mob.com",
+    ".hyg.com"
+  ],
+  "AlwaysIgnoreDomains": [
+    "autopatchcn.yuanshen.com",
+    "autopatchhk.yuanshen.com",
+    "autopatchcn.juequling.com",
+    "autopatchos.zenlesszonezero.com",
+    "autopatchcn.bhsr.com",
+    "autopatchos.starrails.com"
+  ],
+  "ForceRedirectOnUrlContains": [
+    "query_dispatch",
+    "query_gateway",
+    "query_region_list",
+    "query_cur_region"
+  ]
+}
