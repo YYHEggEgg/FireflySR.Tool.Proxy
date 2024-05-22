@@ -10,6 +10,7 @@
     ".juequling.com",
     ".zenlesszonezero.com",
     ".bh3.com",
+    ".honkaiimpact3.com",
     ".mob.com",
     ".hyg.com"
   ],
@@ -20,6 +21,17 @@
     "autopatchos.zenlesszonezero.com",
     "autopatchcn.bhsr.com",
     "autopatchos.starrails.com"
+  ],
+  "BlockUrls": [
+    "/sdk/upload",
+    "/sdk/dataUpload",
+    "/common/h5log/log/batch",
+    "/crash/dataUpload",
+    "/crashdump/dataUpload",
+    "/client/event/dataUpload",
+    "/log",
+    "/asm/dataUpload",
+    "/sophon/dataUpload"
   ],
   "ForceRedirectOnUrlContains": [
     "query_dispatch",

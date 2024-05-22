@@ -3,6 +3,7 @@
     using System;
     using System.Net;
     using System.Net.Security;
+    using System.Text;
     using System.Threading.Tasks;
     using Titanium.Web.Proxy;
     using Titanium.Web.Proxy.EventArguments;
@@ -38,8 +39,11 @@
             _webProxyServer.AddEndPoint(explicitEP);
             _webProxyServer.Start();
 
-            _webProxyServer.SetAsSystemHttpProxy(explicitEP);
-            _webProxyServer.SetAsSystemHttpsProxy(explicitEP);
+            if (OperatingSystem.IsWindows())
+            {
+                _webProxyServer.SetAsSystemHttpProxy(explicitEP);
+                _webProxyServer.SetAsSystemHttpsProxy(explicitEP);
+            }
         }
 
         public void Shutdown()
@@ -74,6 +78,12 @@
             return false;
         }
 
+        private bool ShouldBlock(Uri uri)
+        {
+            var path = uri.AbsolutePath;
+            return _conf.BlockUrls.Contains(path);
+        }
+
         private Task BeforeRequest(object sender, SessionEventArgs args)
         {
             string hostname = args.HttpClient.Request.RequestUri.Host;
@@ -82,12 +92,24 @@
                 string requestUrl = args.HttpClient.Request.Url;
                 Uri local = new Uri($"http://{_targetRedirectHost}:{_targetRedirectPort}/");
 
-                string replacedUrl = new UriBuilder(requestUrl)
+                Uri builtUrl = new UriBuilder(requestUrl)
                 {
                     Scheme = local.Scheme,
                     Host = local.Host,
                     Port = local.Port
-                }.Uri.ToString();
+                }.Uri;
+
+                string replacedUrl = builtUrl.ToString();
+                if (ShouldBlock(builtUrl))
+                {
+                    Console.WriteLine($"Blocked: {replacedUrl}");
+                    args.Respond(new Titanium.Web.Proxy.Http.Response(Encoding.UTF8.GetBytes("Fuck off"))
+                        {
+                            StatusCode = 404,
+                            StatusDescription = "Oh no!!!",
+                        }, true);
+                    return Task.CompletedTask;
+                }
 
                 Console.WriteLine("Redirecting: " + replacedUrl);
                 args.HttpClient.Request.Url = replacedUrl;

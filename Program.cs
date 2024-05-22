@@ -7,6 +7,7 @@ namespace FireflySR.Tool.Proxy
     {
         private const string Title = "FreeSR Proxy (Alter)";
         private const string ConfigPath = "config.json";
+        private const string ConfigTemplatePath = "config.tmpl.json";
 
         private static ProxyService s_proxyService = null!;
         
@@ -15,6 +16,7 @@ namespace FireflySR.Tool.Proxy
             Console.Title = Title;
             Console.WriteLine($"Firefly.Tool.Proxy - Credits for original FreeSR Proxy");
             CheckProxy();
+            InitConfig();
 
             var conf = JsonSerializer.Deserialize<ProxyConfig>(File.ReadAllText(ConfigPath)) ?? throw new FileLoadException("Please correctly configure config.json.");
             s_proxyService = new ProxyService(conf.DestinationHost, conf.DestinationPort, conf);
@@ -22,6 +24,14 @@ namespace FireflySR.Tool.Proxy
             Console.CancelKeyPress += OnProcessExit;
 
             Thread.Sleep(-1);
+        }
+
+        private static void InitConfig()
+        {
+            if (!File.Exists(ConfigPath))
+            {
+                File.Copy(ConfigTemplatePath, ConfigPath);
+            }
         }
 
         private static void OnProcessExit(object? sender, EventArgs args)
