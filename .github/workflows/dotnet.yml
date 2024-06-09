@@ -10,7 +10,10 @@ on:
     branches: [ "master" ]
 
 jobs:
-  build:
+  publish-aot:
+    strategy:
+      matrix:
+        runtime-id: [win-x64]
 
     runs-on: windows-latest
 
@@ -22,13 +25,14 @@ jobs:
         dotnet-version: 8.0.x
     - name: Restore dependencies
       run: dotnet restore
-    - name: Build
-      run: dotnet build --no-restore -c Release
     - name: Test
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet test --verbosity normal
+    - name: Publish
+      run: dotnet publish FireflySR.Tool.Proxy.csproj -c Release -r ${{ matrix.runtime-id }}
+    - name: Remove .pdb debug symbols
+      run: rm bin/Release/net8.0/${{ matrix.runtime-id }}/publish/*.pdb
     - name: Upload
       uses: actions/upload-artifact@v4
       with:
-        name: FireflySR.Tool.Proxy
-        path: bin/Release/net7.0
-        retention-days: 7
+        name: FireflySR.Tool.Proxy_${{ matrix.runtime-id }}
+        path: bin/Release/net8.0/${{ matrix.runtime-id }}/publish

@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.Diagnostics;
+using System.Net;
 using System.Text.Json;
 
 namespace FireflySR.Tool.Proxy
@@ -8,6 +9,7 @@ namespace FireflySR.Tool.Proxy
         private const string Title = "FreeSR Proxy (Alter)";
         private const string ConfigPath = "config.json";
         private const string ConfigTemplatePath = "config.tmpl.json";
+        private const string GuardianPath = "FireflySR.Tool.Proxy.Guardian.exe";
 
         private static ProxyService s_proxyService = null!;
         
@@ -15,15 +17,35 @@ namespace FireflySR.Tool.Proxy
         {
             Console.Title = Title;
             Console.WriteLine($"Firefly.Tool.Proxy - Credits for original FreeSR Proxy");
+            StartGuardian();
             CheckProxy();
             InitConfig();
 
-            var conf = JsonSerializer.Deserialize<ProxyConfig>(File.ReadAllText(ConfigPath)) ?? throw new FileLoadException("Please correctly configure config.json.");
+            var conf = JsonSerializer.Deserialize(File.ReadAllText(ConfigPath), ProxyConfigContext.Default.ProxyConfig) ?? throw new FileLoadException("Please correctly configure config.json.");
             s_proxyService = new ProxyService(conf.DestinationHost, conf.DestinationPort, conf);
             AppDomain.CurrentDomain.ProcessExit += OnProcessExit;
             Console.CancelKeyPress += OnProcessExit;
 
             Thread.Sleep(-1);
+        }
+
+        private static void StartGuardian()
+        {
+            if (!OperatingSystem.IsWindows()) return;
+
+            try
+            {
+                var proc = Process.Start(new ProcessStartInfo(GuardianPath, $"{Environment.ProcessId}")
+                {
+                    UseShellExecute = false,
+                });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                Console.WriteLine();
+                Console.WriteLine("Guardian start failed. Your proxy settings may not be able to recover after closing.");
+            }
         }
 
         private static void InitConfig()

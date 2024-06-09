@@ -1,16 +1,26 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <PublishAot>true</PublishAot>
     <RollForward>Major</RollForward>
     <LangVersion>Latest</LangVersion>
+    <AssemblyVersion>2.0.0</AssemblyVersion>
+    <FileVersion>2.0.0</FileVersion>
+    <Version>2.0.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Titanium.Web.Proxy" Version="3.2.0" />
+    <Compile Remove="Guardian\**" />
+    <EmbeddedResource Remove="Guardian\**" />
+    <None Remove="Guardian\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Unobtanium.Web.Proxy" Version="0.1.1" />
   </ItemGroup>
 
   <ItemGroup>
@@ -19,4 +29,9 @@
     </None>
   </ItemGroup>
 
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent" Condition="$(Os) == 'Windows_NT'">
+	  <Exec Condition="$(RuntimeIdentifier) == ''" Command="echo ProjectDir: $(ProjectDir)&#xD;&#xA;echo Configuration: $(Configuration)&#xD;&#xA;echo OutDir: $(OutDir)&#xD;&#xA;echo Os: $(Os)&#xD;&#xA;echo RuntimeIdentifier: (unused)&#xD;&#xA;dotnet publish $(ProjectDir)\Guardian --configuration $(Configuration) --output $(OutDir)" />
+	  <Exec Condition="$(RuntimeIdentifier) != ''" Command="echo ProjectDir: $(ProjectDir)&#xD;&#xA;echo Configuration: $(Configuration)&#xD;&#xA;echo OutDir: $(OutDir)&#xD;&#xA;echo Os: $(Os)&#xD;&#xA;echo RuntimeIdentifier: $(RuntimeIdentifier)&#xD;&#xA;dotnet publish $(ProjectDir)\Guardian --configuration $(Configuration) --output $(OutDir)\publish" />
+  </Target>
+ 
 </Project>

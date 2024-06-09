@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <PublishAot>true</PublishAot>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <RootNamespace>FireflySR.Tool.Proxy.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
+    <AssemblyName>FireflySR.Tool.Proxy.$(MSBuildProjectName)</AssemblyName>
+  </PropertyGroup>
+
+</Project>

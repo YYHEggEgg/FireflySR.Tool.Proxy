@@ -31,7 +31,14 @@
     "/client/event/dataUpload",
     "/log",
     "/asm/dataUpload",
-    "/sophon/dataUpload"
+    "/sophon/dataUpload",
+    "/apm/dataUpload",
+    "/2g/dataUpload",
+    "/v1/firelog/legacy/log",
+    "/h5/upload",
+    "/_ts",
+    "/perf/config/verify",
+    "/ptolemaios_api/api/reportStrategyData"
   ],
   "ForceRedirectOnUrlContains": [
     "query_dispatch",
