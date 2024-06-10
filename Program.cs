@@ -12,30 +12,54 @@ namespace FireflySR.Tool.Proxy
         private const string GuardianPath = "FireflySR.Tool.Proxy.Guardian.exe";
 
         private static ProxyService s_proxyService = null!;
+        private static bool s_clearupd = false;
         
         private static void Main(string[] args)
         {
             Console.Title = Title;
             Console.WriteLine($"Firefly.Tool.Proxy - Credits for original FreeSR Proxy");
-            StartGuardian();
+            _ = Task.Run(WatchGuardianAsync);
             CheckProxy();
             InitConfig();
 
             var conf = JsonSerializer.Deserialize(File.ReadAllText(ConfigPath), ProxyConfigContext.Default.ProxyConfig) ?? throw new FileLoadException("Please correctly configure config.json.");
             s_proxyService = new ProxyService(conf.DestinationHost, conf.DestinationPort, conf);
+            Console.WriteLine($"Proxy now running");
             AppDomain.CurrentDomain.ProcessExit += OnProcessExit;
             Console.CancelKeyPress += OnProcessExit;
 
             Thread.Sleep(-1);
         }
 
-        private static void StartGuardian()
+        private static async Task WatchGuardianAsync()
         {
-            if (!OperatingSystem.IsWindows()) return;
+            var proc = StartGuardian();
+            if (proc == null)
+            {
+                Console.WriteLine("Guardian start failed. Your proxy settings may not be able to recover after closing.");
+                return;
+            }
+
+            // Notice that on some PTY, closing it may lead
+            // to Guardian be killed, not the Proxy itself.
+            // Therefore, Proxy should also watch Guardian
+            // and exit when Guardian dies.
+            while (!proc.HasExited)
+            {
+                await Task.Delay(1000);
+            }
+            Console.WriteLine("! Guardian exit");
+            OnProcessExit(null, null);
+            Environment.Exit(0);
+        }
+
+        private static Process? StartGuardian()
+        {
+            if (!OperatingSystem.IsWindows()) return null;
 
             try
             {
-                var proc = Process.Start(new ProcessStartInfo(GuardianPath, $"{Environment.ProcessId}")
+                return Process.Start(new ProcessStartInfo(GuardianPath, $"{Environment.ProcessId}")
                 {
                     UseShellExecute = false,
                 });
@@ -44,7 +68,7 @@ namespace FireflySR.Tool.Proxy
             {
                 Console.WriteLine(ex);
                 Console.WriteLine();
-                Console.WriteLine("Guardian start failed. Your proxy settings may not be able to recover after closing.");
+                return null;
             }
         }
 
@@ -56,9 +80,11 @@ namespace FireflySR.Tool.Proxy
             }
         }
 
-        private static void OnProcessExit(object? sender, EventArgs args)
+        private static void OnProcessExit(object? sender, EventArgs? args)
         {
-            s_proxyService.Shutdown();
+            if (s_clearupd) return;
+            s_proxyService?.Shutdown();
+            s_clearupd = true;
         }
 
         public static void CheckProxy()
