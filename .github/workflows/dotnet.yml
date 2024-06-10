@@ -30,7 +30,9 @@ jobs:
     - name: Publish
       run: dotnet publish FireflySR.Tool.Proxy.csproj -c Release -r ${{ matrix.runtime-id }}
     - name: Remove .pdb debug symbols
-      run: rm bin/Release/net8.0/${{ matrix.runtime-id }}/publish/*.pdb
+      run: |
+        rm bin/Release/net8.0/${{ matrix.runtime-id }}/publish/*.pdb
+        rm bin/Release/net8.0/${{ matrix.runtime-id }}/publish/**/*.pdb
     - name: Upload
       uses: actions/upload-artifact@v4
       with:

@@ -30,8 +30,8 @@
   </ItemGroup>
 
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent" Condition="$(Os) == 'Windows_NT'">
-	  <Exec Condition="$(RuntimeIdentifier) == ''" Command="echo ProjectDir: $(ProjectDir)&#xD;&#xA;echo Configuration: $(Configuration)&#xD;&#xA;echo OutDir: $(OutDir)&#xD;&#xA;echo Os: $(Os)&#xD;&#xA;echo RuntimeIdentifier: (unused)&#xD;&#xA;dotnet publish $(ProjectDir)\Guardian --configuration $(Configuration) --output $(OutDir)" />
-	  <Exec Condition="$(RuntimeIdentifier) != ''" Command="echo ProjectDir: $(ProjectDir)&#xD;&#xA;echo Configuration: $(Configuration)&#xD;&#xA;echo OutDir: $(OutDir)&#xD;&#xA;echo Os: $(Os)&#xD;&#xA;echo RuntimeIdentifier: $(RuntimeIdentifier)&#xD;&#xA;dotnet publish $(ProjectDir)\Guardian --configuration $(Configuration) --output $(OutDir)\publish" />
+	  <Exec Condition="$(RuntimeIdentifier) == ''" Command="echo ProjectDir: $(ProjectDir)&#xD;&#xA;echo Configuration: $(Configuration)&#xD;&#xA;echo OutDir: $(OutDir)&#xD;&#xA;echo Os: $(Os)&#xD;&#xA;echo RuntimeIdentifier: (unused)&#xD;&#xA;dotnet build $(ProjectDir)\Guardian --configuration $(Configuration) --output $(OutDir)\tool" />
+	  <Exec Condition="$(RuntimeIdentifier) != ''" Command="echo ProjectDir: $(ProjectDir)&#xD;&#xA;echo Configuration: $(Configuration)&#xD;&#xA;echo OutDir: $(OutDir)&#xD;&#xA;echo Os: $(Os)&#xD;&#xA;echo RuntimeIdentifier: $(RuntimeIdentifier)&#xD;&#xA;dotnet publish $(ProjectDir)\Guardian --configuration $(Configuration) --output $(OutDir)\publish\tool" />
   </Target>
  
 </Project>

@@ -9,7 +9,7 @@ namespace FireflySR.Tool.Proxy
         private const string Title = "FreeSR Proxy (Alter)";
         private const string ConfigPath = "config.json";
         private const string ConfigTemplatePath = "config.tmpl.json";
-        private const string GuardianPath = "FireflySR.Tool.Proxy.Guardian.exe";
+        private const string GuardianPath = "tool/FireflySR.Tool.Proxy.Guardian.exe";
 
         private static ProxyService s_proxyService = null!;
         private static bool s_clearupd = false;
